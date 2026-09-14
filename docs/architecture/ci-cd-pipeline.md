@@ -85,3 +85,12 @@ The first smoke-test run intentionally starts the image without required runtime
 ## Cleanup
 
 The workflow can be paused from the repository's Actions page with `Disable workflow`. The package can be removed from `Package settings` with `Delete this package`. Neither action changes the live AWS environment.
+# DentalFlow CI/CD Pipeline
+
+## Purpose
+
+This pipeline validates every code change and publishes a container artifact after a successful merge to `main`. It does not deploy to Amazon ECS or change any live AWS resource.
+
+## Policy evidence
+
+The `main` branch requires a pull request and a successful `Validate container` check before changes can merge.
