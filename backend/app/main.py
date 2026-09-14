@@ -1,13 +1,23 @@
+import asyncio
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
-app = FastAPI(title="DentalFlow")
+from app.config import settings
 
 
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    task = None
+    if settings.upload_queue_url:
+        from app.services.sqs_consumer import sqs_poll_loop
+
+        task = asyncio.create_task(sqs_poll_loop())
+
+    yield
+
+    if task is not None:
+        task.cancel()
 
 
-@app.get("/")
-def root():
-    return {"message": "DentalFlow API is running"}
+app = FastAPI(lifespan=lifespan)
